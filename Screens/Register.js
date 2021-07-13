@@ -5,8 +5,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Axios from 'axios';
 import CountryDropDown from './components/CountryDropDown';
 import CheckBoxContainer from './components/CheckBoxContainer';
-
-export default function Register() {
+import DashBoard from './DashBoard';
+export default function Register({navigation}) {
     const [firstName, setFirstName] = React.useState('')
     const [lastName, setLastName] = React.useState('')
     const [email, setEmail] = React.useState('')
@@ -276,7 +276,8 @@ const checkBoxValidation = () => {
     if(isSelected == true)
     {
         // register_to_database()
-        alert('success')
+        // alert('success')
+        navigation.navigate(DashBoard)
     }
 }
 /*CHECK BOX VALIDATION ENDS HERE*/
