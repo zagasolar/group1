@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View , KeyboardAvoidingView , CheckBox , Linking} from 'react-native'
+import { StyleSheet, Text, View , KeyboardAvoidingView  ,ScrollView, Linking , Platform ,Dimensions} from 'react-native'
 import {Input , Button} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Axios from 'axios';
-import {CountryDropdown , RegionDropdown , CountryRegionData } from 'react-country-region-selector'
+import CountryDropDown from './components/CountryDropDown';
+import CheckBoxContainer from './components/CheckBoxContainer';
 
-const Register = ({navigation}) => {
+export default function Register() {
     const [firstName, setFirstName] = React.useState('')
     const [lastName, setLastName] = React.useState('')
     const [email, setEmail] = React.useState('')
@@ -20,11 +21,20 @@ const Register = ({navigation}) => {
     const [firstNameError , setFirstNameError] = React.useState('')
     const [lastNameError , setLastNameError] = React.useState('')
     const [street , SetStreet] = React.useState('')
-    const [isSelected , setIsSelected] = React.useState(false)
+    const [isSelected , setIsSelected] = React.useState('')
     const emailRegex = /\S+@\S+\.\S+/
     const phoneRegex = /^[0-9]+$/
     const nameRegex = /^[A-Za-z]+$/
-
+    const SetCountryCode=(countryValue)=>{
+        setCountry(countryValue)
+    }
+    const setRegionCode=(regionValue)=>{
+        setRegion(regionValue)
+    }
+    const CheckBoxCode=(checkValue)=>{
+        setIsSelected(checkValue);
+    }
+    console.log(isSelected);
 /*FIRST NAME VALIDATION STARTS HERE */
 const validation = (event) => {
     if(firstName.length != 0)
@@ -196,7 +206,7 @@ const streetValidation = () => {
         }, 3000);
     }
     else{
-        countryValidation()
+        regionValidation()
     }
 }
 /*STREET VALIDATION ENDS HERE */
@@ -228,21 +238,21 @@ const phoneNumberValidation = () => {
 /*PHONE NUMBER VALIDATION STARTS HERE */
 
 /*COUNTRY VALIDATION STARTS HERE */
-const [selectCountry , setSelectCountry] = React.useState('')
-const countryValidation = () => {
-    console.log(country)
-    if(country != '')
-    {
-        regionValidation()
-    }
-    else
-    {
-        setSelectCountry('choose the country')
-        setTimeout(() => {
-            setSelectCountry('')
-        }, 3000);
-    }
-}
+// const [selectCountry , setSelectCountry] = React.useState('')
+// const countryValidation = () => {
+//     console.log(country)
+//     if(country != '')
+//     {
+//         regionValidation()
+//     }
+//     else
+//     {
+//         setSelectCountry('choose the country')
+//         setTimeout(() => {
+//             setSelectCountry('')
+//         }, 3000);
+//     }
+// }
 /*COUNTRY VALIDATION ENDS HERE */
 
 /*REGION VALIDATION STARTS HERE */
@@ -262,27 +272,26 @@ const regionValidation = () => {
 
 /*CHECK BOX VALIDATION STARTS HERE*/
 const checkBoxValidation = () => {
-    console.log(isSelected)
+    //console.log(isSelected)
     if(isSelected == true)
     {
-        register_to_database()
+        // register_to_database()
+        alert('success')
     }
 }
 /*CHECK BOX VALIDATION ENDS HERE*/
 
 const allField = () => {
-    if(firstName==0 && lastName==0 && email==0 && password==0 && confirmPassword==0 && phoneNumber==0 && address==0 && country==0 && region==0 && street==0)
+    if(firstName==0 && lastName==0 && email==0 && password==0 && confirmPassword==0 && phoneNumber==0 && address==0  && street==0)
     {
-        setFirstNameError('enter first name')
-        setLastNameError('enter last name')
-        setEmailError('enter email')
-        setPasswordError('enter password')
-        setConfirmPasswordError('enter confirm password')
-        setPhoneNumberError('enter phone number')
-        setAddressError('enter address')
-        setSelectCountry('choose country')
-        setSelectRegion('choose region')
-        setAddressError('enter the street name')
+        setFirstNameError('*Enter first name')
+        setLastNameError('*Enter last name')
+        setEmailError('*Enter E-mail')
+        setPasswordError('*Enter password')
+        setConfirmPasswordError('*Enter confirm password')
+        setPhoneNumberError('*Enter phone number')
+        setAddressError('*Enter address')
+        setAddressError('*Enter the street name')
         setTimeout(() => {
             setFirstNameError('')
             setLastNameError('')
@@ -291,13 +300,13 @@ const allField = () => {
             setConfirmPasswordError('')
             setPhoneNumberError('')
             setAddressError('')
-            setSelectCountry('')
             setStreetError('')
-            setSelectRegion('')
         }, 3000);
+
     }
     else{
         validation()
+        
     }
 }
 
@@ -336,127 +345,90 @@ const allField = () => {
 }
 
     return (
-        <KeyboardAvoidingView behavior='padding' style={styles.overAllContainer}>
-            <Text style={styles.header}>ZAGA REGISTRATION</Text>
-            <View style={styles.inputContainer}>
-                <Input 
-                placeholder='First Name'
-                value = {firstName}
-                onChangeText={text => setFirstName(text)}
-                />
-                <View style={{paddingLeft:10}}><Text>{firstNameError}</Text></View>
-                <Input 
-                value = {lastName}
-                onChangeText={text => setLastName(text)}
-                placeholder='Last Name'/>
-                <View style={{paddingLeft:10}}><Text>{lastNameError}</Text></View>
-                <Input
-                placeholder='Email'
-                keyboardType='email-address'
-                value ={email}
-                onChangeText={text => setEmail(text)}/>
-                <View style={{paddingLeft:10,marginTop:-5}}><Text>{emailError}</Text></View>
-                <View style={{paddingLeft:10}}><Text>{mailDbError}</Text></View>
-                <Input
-                 secureTextEntry
-                 placeholder='Password'
-                 value = {password}
-                 onChangeText={text => setPassword(text)}
-                />
-                <View style={{paddingLeft:10}}><Text>{passwordError}</Text></View>
-                <Input 
-                secureTextEntry
-                placeholder='Confirm Password'
-                value = {confirmPassword}
-                onChangeText={text => setConfirmPassword(text)}
-                />
-                <View style={{paddingLeft:10}}><Text>{confirmPasswordError}</Text></View>
-                <Input
-                 placeholder='Phone Number'
-                 keyboardType='numeric'
-                 value = {phoneNumber}
-                 onChangeText={text => setPhoneNumber(text)}
-                 />
-                 <View style={{paddingLeft:10}}><Text>{phoneNumberError}</Text></View>
-                <Input 
-                placeholder='Flat/Apartment No.'
-                value = {address}
-                onChangeText={text => setAddress(text)}
-                />
-                <View style={{paddingLeft:10}}><Text>{addressError}</Text></View>
-                <Input 
-                placeholder='Street/Locality'
-                value = {street}
-                onChangeText={text => SetStreet(text)}
-                />
-                <View style={{paddingLeft:10}}><Text>{streetError}</Text></View>
-                 <View style={{width:300 , padding: 10,}}>
-                    <CountryDropdown style={{paddingTop:10,marginBottom:10}}
-                    value={country}
-                    onChange={val=>setCountry(val)}
-                    />
-                    <View style={{paddingLeft:5,marginBottom:5}}><Text>{selectCountry}</Text></View>
-                    <RegionDropdown style={{paddingTop:10}}
-                    country={country}
-                    value={region}
-                    onChange={val=>setRegion(val)}
-                    />
-                    <View style={{paddingLeft:5,marginBottom:5}}><Text>{selectRegion}</Text></View>
-                 </View>
+        <View style={{
+            width:Dimensions.get('window').width,
+        }}>
+            <View style={{alignItems:'center'}}>
+                <Text style={{
+                    fontSize:20,
+                    fontWeight:'bold',
+                    marginBottom:30,
+                    color : '#22A0B6',
+                }}>ZAGA REGISTERTATION</Text>
             </View>
-            <View style={{height:-3}}/>
-            <View style={styles.checkBoxContainer}>
-            <CheckBox
-                value={isSelected}
-                onValueChange={setIsSelected}
-                style={styles.checkView}
-            />
-            <Text style={styles.TextDesign} onPress={()=>Linking.openURL('https://www.zaubacorp.com/company/ZAGA-OPEN-SOURCE-OPC-PRIVATE-LIMITED/U72900TN2019OPC130150')}>I have read and agree to the Privacy Policy</Text>
+        <ScrollView>
+         {/* <KeyboardAvoidingView behavior={Platform.OS==='ios' ? 'padding' : 'height'}> */}
+                
+                    <Input
+                        placeholder='First Name'
+                        value = {firstName}
+                        onChangeText={text => setFirstName(text)}
+                    />
+                    <Text style={{marginLeft:10,textDecorationColor:'#f44336'}}>{firstNameError}</Text>
+                    <Input 
+                        value = {lastName}
+                        onChangeText={text => setLastName(text)}
+                        placeholder='Last Name'
+                    />
+                    <Text style={{marginLeft:10}}>{lastNameError}</Text>
+                    <Input
+                        placeholder='Email'
+                        keyboardType='email-address'
+                        value ={email}
+                        onChangeText={text => setEmail(text)}
+                    />
+                    <Text style={{marginLeft:10}}>{emailError}{mailDbError}</Text>
+                    <Input
+                        secureTextEntry
+                        placeholder='Password'
+                        value = {password}
+                        onChangeText={text => setPassword(text)}
+                    />
+                    <Text style={{marginLeft:10}}>{passwordError}</Text>
+                    <Input 
+                        secureTextEntry
+                        placeholder='Confirm Password'
+                        value = {confirmPassword}
+                        onChangeText={text => setConfirmPassword(text)}
+                    />
+                    <Text style={{marginLeft:10}}>{confirmPasswordError}</Text>
+                    <Input
+                        placeholder='Phone Number'
+                        keyboardType='numeric'
+                        value = {phoneNumber}
+                        onChangeText={text => setPhoneNumber(text)}
+                    />
+                    <Text style={{marginLeft:10}}>{phoneNumberError}</Text>
+                    <Input 
+                        placeholder='Flat/Apartment No.'
+                        value = {address}
+                        onChangeText={text => setAddress(text)}
+                    />
+                    <Text style={{marginLeft:10}}>{addressError}</Text>
+                    <Input 
+                        placeholder='Street/Locality'
+                        value = {street}
+                        onChangeText={text => SetStreet(text)}
+                    />
+                    <Text style={{marginLeft:10}}>{streetError}</Text>
+                    <View><CountryDropDown SetCountryCode={SetCountryCode} setRegionCode={setRegionCode}></CountryDropDown></View>
+                    <Text style={{marginLeft:10}}>{selectRegion}</Text>
+                    <View style={{height:40 , marginLeft:10,marginTop:10}}><CheckBoxContainer CheckBoxCode={CheckBoxCode}/></View>
+                    <View style={{paddingLeft:10,paddingRight:10}}><Button
+                        icon={
+                            <Icon
+                            name="arrow-right"
+                            size={15}
+                            color="white"
+                            />}
+                            // style={{height:40 ,marginTop:10 }}
+                        title='Register' onPress={allField} /></View>
+                    <View style={{height:30}}/>
+                
+                {/* </KeyboardAvoidingView>    */}
+            </ScrollView>
             </View>
-            <Button style={styles.button}
-            icon={
-                <Icon
-                  name="arrow-right"
-                  size={15}
-                  color="white"
-                />}
-            title='Register' onPress={allField} />
-        </KeyboardAvoidingView>
+       
     )
 }
 
-export default Register
-
-const styles = StyleSheet.create({
-    overAllContainer:{
-        flex:1,
-        padding:10,
-        alignItems: 'center',
-        justifyContent:'center'
-    },
-    header:{
-        fontSize:20,
-        fontWeight:'bold',
-        marginBottom:40,
-        color : '#22A0B6',
-    },
-    inputContainer:{
-        width:300,
-    },
-    button:{
-        width:200,
-    },
-    checkBoxContainer : {
-        flexDirection:'row',
-        marginBottom : 20
-    },
-    checkView:{
-        alignSelf:'center',
-        width:15,
-        height:15
-    },
-    TextDesign:{
-        margin:5,
-        width:275
-    }
-})
